@@ -1,0 +1,37 @@
+name: Render Preview Jalur Prestasi (3 menit)
+
+# Render komposisi Preview (6070 frame, 1280x720, 30fps) tanpa audio.
+# Narasi + BGM + SFX + caption digabung secara lokal oleh Clover.
+on:
+  workflow_dispatch:
+
+jobs:
+  render:
+    name: Render Preview
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Ensure browser
+        run: npx remotion browser ensure
+
+      - name: Render Preview
+        run: npx remotion render Preview preview-silent.mp4
+
+      - name: Upload video
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-silent
+          path: preview-silent.mp4
+          retention-days: 7

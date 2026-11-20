@@ -1,0 +1,8 @@
+node_modules/
+*.mp4
+*.log
+qc-demo/
+.DS_Store
+
+.remotion-preview-bundle/
+qc-preview/
