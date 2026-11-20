@@ -1,6 +1,6 @@
 import React from 'react';
 import {AbsoluteFill, Easing, interpolate, useCurrentFrame} from 'remotion';
-import {CLAMP, PAL, SmoothCamera} from '../previewPlan';
+import {CLAMP, PAL, SmoothCamera, fadeIn, popInPlace} from '../previewPlan';
 import {PixelCharacter, PixelGoat} from '../PixelCharacters';
 import {PixelBus, PixelSky, VillageSignboard, WoodenScoreboard} from '../PixelProps';
 
@@ -9,6 +9,10 @@ const INK = PAL.ink;
 /**
  * BEAT 9: T2_4_papan_skor (f4008-4254, dur 246)
  * Wooden scoreboard at the middle road: top tile "TAHUN 2", scores 44 (Prestasi) and 43 (Orang Dalam).
+ * MG synced to narration ("skornya [76..95] 44 [95..116] lawan [116..128] 43 [128..143]. Hampir sama [161..182]."):
+ * - Left score counts continuously 0 -> 44 (f82..116) while recessed left bar grows in lockstep.
+ * - Right score counts continuously 0 -> 43 (f114..145) while recessed right bar grows in lockstep.
+ * - When numbers stop, hanging wooden "SELISIH 1" tag pops cleanly in under the board (f148..164).
  * Camera: slow continuous eased zoom in onto the scoreboard, holds steadily.
  * Palette: Year 2 still IDENTICAL warm across both sides!
  */
@@ -16,6 +20,19 @@ export const T2_4_papan_skor: React.FC = () => {
   const f = useCurrentFrame();
   const zoom = interpolate(f, [0, 175], [1.0, 1.24], {...CLAMP, easing: Easing.inOut(Easing.cubic)});
   const flip = interpolate(f, [18, 44], [0, 1], {...CLAMP, easing: Easing.out(Easing.cubic)});
+
+  // Continuous eased count-up & bar growth synced verbatim to "44 lawan 43"
+  const SCORE_BAR_MAX = 54;
+  const leftVal = interpolate(f, [82, 116], [0, 44], {...CLAMP, easing: Easing.out(Easing.cubic)});
+  const rightVal = interpolate(f, [114, 145], [0, 43], {...CLAMP, easing: Easing.out(Easing.cubic)});
+  const leftPulse =
+    1 + 0.06 * interpolate(f, [114, 119, 128], [0, 1, 0], {...CLAMP, easing: Easing.inOut(Easing.quad)});
+  const rightPulse =
+    1 + 0.06 * interpolate(f, [143, 148, 157], [0, 1, 0], {...CLAMP, easing: Easing.inOut(Easing.quad)});
+
+  // Small wooden "SELISIH 1" tag pops in under the board right after numbers stop
+  const diffPop = popInPlace(f, 148, 16);
+  const diffOpacity = fadeIn(f, 148, 8);
 
   return (
     <AbsoluteFill style={{overflow: 'hidden', backgroundColor: PAL.skyMid}}>
@@ -29,6 +46,17 @@ export const T2_4_papan_skor: React.FC = () => {
           {/* Identical warm Year 2 grass + empty border field (NO factory!) */}
           <rect x={0} y={266} width={1280} height={236} fill={PAL.grassWarm} />
           <rect x={160} y={336} width={960} height={110} fill="#B3B86A" />
+          {/* Subtle distant trees & grass tufts (F5) */}
+          {[245, 360, 915, 1030].map((tx) => (
+            <g key={tx} transform={`translate(${tx}, 280)`}>
+              <rect x={-5} y={-8} width={10} height={20} fill={PAL.wood} stroke={INK} strokeWidth={2} />
+              <rect x={-18} y={-34} width={36} height={28} fill={PAL.treeTop} stroke={INK} strokeWidth={2} />
+              <rect x={-12} y={-40} width={24} height={10} fill={PAL.treeHi} />
+            </g>
+          ))}
+          {[140, 390, 880, 1120].map((gx, i) => (
+            <rect key={gx} x={gx} y={456 + (i % 2) * 14} width={20} height={6} fill={PAL.grassWarmLo} />
+          ))}
           {/* Middle dirt road running north-south cleanly into perspective behind scoreboard */}
           <polygon points="590,266 690,266 790,502 490,502" fill={PAL.roadWarm} />
           <polygon points="586,266 592,266 496,502 488,502" fill={PAL.roadWarmLo} />
@@ -45,12 +73,21 @@ export const T2_4_papan_skor: React.FC = () => {
 
         <WoodenScoreboard
           x={640}
-          y={576}
+          y={588}
           scale={1.42}
           yearLabel="TAHUN 2"
-          scoreLeft="44"
-          scoreRight="43"
+          scoreLeft={String(Math.round(leftVal))}
+          scoreRight={String(Math.round(rightVal))}
           flipProgress={flip}
+          mg={{
+            barLeftRatio: leftVal / SCORE_BAR_MAX,
+            barRightRatio: rightVal / SCORE_BAR_MAX,
+            leftPulse,
+            rightPulse,
+            diffLabel: 'SELISIH 1',
+            diffPop,
+            diffOpacity,
+          }}
         />
       </AbsoluteFill>
     </AbsoluteFill>
@@ -106,6 +143,17 @@ export const T2_5_bus_yang_sama: React.FC = () => {
 
         {/* Shared green warm ground south of highway */}
         <rect x={0} y={327} width={1280} height={393} fill={PAL.grassWarm} />
+        {/* Subtle pixel grass tufts & small roadside bushes (F5) */}
+        {[85, 225, 355, 185, 920, 1085, 1185].map((gx, i) => (
+          <rect key={gx} x={gx} y={372 + (i % 4) * 72} width={22} height={6} fill={PAL.grassWarmLo} />
+        ))}
+        {[120, 260].map((tx) => (
+          <g key={tx} transform={`translate(${tx}, 410)`}>
+            <rect x={-6} y={-8} width={12} height={20} fill={PAL.wood} stroke={INK} strokeWidth={2} />
+            <rect x={-22} y={-38} width={44} height={32} fill={PAL.treeTop} stroke={INK} strokeWidth={2.5} />
+            <rect x={-16} y={-44} width={32} height={10} fill={PAL.treeHi} />
+          </g>
+        ))}
         {/* Middle dirt road joining the halte from south */}
         <polygon points="575,327 705,327 745,720 535,720" fill={PAL.roadWarm} />
         <polygon points="571,327 577,327 539,720 532,720" fill={PAL.roadWarmLo} />

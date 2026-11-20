@@ -58,8 +58,8 @@ export interface PixelCharacterProps {
   year4?: boolean;
   /** Wear woven caping hat (Sari in rice field / herding). */
   caping?: boolean;
-  /** Optional prop override (e.g. envelope in hand, clipboard, stick). */
-  holding?: 'none' | 'envelope_thin' | 'envelope_thick' | 'clipboard' | 'letter' | 'stick' | 'pen' | 'crate';
+  /** Optional prop override (e.g. envelope in hand, clipboard, stick, suitcase). */
+  holding?: 'none' | 'envelope_thin' | 'envelope_thick' | 'clipboard' | 'letter' | 'stick' | 'pen' | 'crate' | 'suitcase';
   /** Vertical offset in SVG art-pixels for pointing hand (e.g. tracing down an announcement list). */
   pointOffsetY?: number;
   style?: React.CSSProperties;
@@ -218,14 +218,17 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
       case 'rani':
         return (
           <g>
-            {/* Dark hair crown + single unmistakable long braid (kepang) hanging down the back */}
+            {/* Dark hair crown with subtle pixel texture + single unmistakable long braid (kepang) */}
             <rect x={hx - 1} y={headY - 2} width={p.headW + 2} height={5} fill="#231D1A" />
+            <rect x={hx + 1} y={headY - 1} width={4} height={1} fill="#3D322C" />
+            <rect x={hx + 7} y={headY - 1} width={3} height={1} fill="#3D322C" />
             <rect x={hx - 2} y={headY + 1} width={3} height={8} fill="#231D1A" />
+            <rect x={hx + p.headW - 1} y={headY + 1} width={2} height={4} fill="#231D1A" />
             {/* Long distinct braid hanging behind shoulder */}
             <rect x={hx - 4} y={headY + 8} width={4} height={4} fill="#231D1A" />
-            <rect x={hx - 5} y={headY + 12} width={4} height={4} fill="#362C27" />
+            <rect x={hx - 5} y={headY + 12} width={4} height={4} fill="#3B302A" />
             <rect x={hx - 5} y={headY + 16} width={4} height={4} fill="#231D1A" />
-            <rect x={hx - 6} y={headY + 20} width={4} height={4} fill="#362C27" />
+            <rect x={hx - 6} y={headY + 20} width={4} height={4} fill="#3B302A" />
             <rect x={hx - 6} y={headY + 24} width={4} height={2} fill="#7EC8F2" /> {/* blue hair tie */}
             <rect x={hx - 6} y={headY + 26} width={3} height={3} fill="#231D1A" />
           </g>
@@ -233,12 +236,17 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
       case 'sari':
         return (
           <g>
-            {/* Short shoulder-length bob with bangs (poni) + bright yellow hair clip (jepit kuning) */}
+            {/* Short shoulder-length bob with textured bangs (poni) + bright yellow hair clip (jepit kuning) */}
             <rect x={hx - 2} y={headY - 2} width={p.headW + 4} height={5} fill="#261E19" />
-            {/* Bangs across forehead */}
-            <rect x={hx} y={headY + 2} width={p.headW - 1} height={3} fill="#261E19" />
+            <rect x={hx + 1} y={headY - 1} width={5} height={1} fill="#42362E" />
+            <rect x={hx + 9} y={headY - 1} width={4} height={1} fill="#42362E" />
+            {/* Bangs across forehead with soft notch */}
+            <rect x={hx} y={headY + 2} width={p.headW - 1} height={2} fill="#261E19" />
+            <rect x={hx + 1} y={headY + 4} width={3} height={1} fill="#261E19" />
+            <rect x={hx + 7} y={headY + 4} width={4} height={1} fill="#261E19" />
             {/* Bob sides down to jaw/shoulder */}
             <rect x={hx - 3} y={headY + 2} width={4} height={13} fill="#261E19" />
+            <rect x={hx - 2} y={headY + 5} width={1} height={6} fill="#3D3129" />
             <rect x={hx + p.headW - 1} y={headY + 2} width={3} height={11} fill="#261E19" />
             {/* Bright yellow hair clip */}
             <rect x={hx + 2} y={headY + 2} width={5} height={2} fill="#F7D74A" />
@@ -248,18 +256,21 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
       case 'bimo':
         return (
           <g>
-            {/* Fluffy short curly hair (ikal mengembang) */}
+            {/* Fluffy short curly hair (ikal mengembang) with pixel curl highlights */}
             <rect x={hx - 2} y={headY - 4} width={p.headW + 4} height={6} fill="#29211C" />
             <rect x={hx - 3} y={headY - 2} width={p.headW + 6} height={5} fill="#29211C" />
             <rect x={hx + 1} y={headY - 5} width={6} height={2} fill="#29211C" />
             <rect x={hx + 9} y={headY - 5} width={5} height={2} fill="#29211C" />
+            <rect x={hx + 2} y={headY - 3} width={3} height={1} fill="#473B33" />
+            <rect x={hx + 8} y={headY - 2} width={3} height={1} fill="#473B33" />
+            <rect x={hx + 13} y={headY - 3} width={3} height={1} fill="#473B33" />
             <rect x={hx - 2} y={headY + 2} width={3} height={4} fill="#29211C" />
-            {/* Year 4: yellow pencil tucked behind ear! */}
+            {/* Year 4: yellow pencil tucked cleanly behind ear (outside face!) */}
             {year4 ? (
               <g>
-                <rect x={hx - 4} y={headY + 4} width={6} height={2} fill="#F4C942" />
-                <rect x={hx - 5} y={headY + 4} width={1} height={2} fill="#D66E6E" />
-                <rect x={hx + 2} y={headY + 4} width={2} height={2} fill="#231D1A" />
+                <rect x={hx - 7} y={headY + 2} width={6} height={2} fill="#F4C942" />
+                <rect x={hx - 8} y={headY + 2} width={1} height={2} fill="#D66E6E" />
+                <rect x={hx - 1} y={headY + 2} width={1} height={2} fill="#231D1A" />
               </g>
             ) : null}
           </g>
@@ -267,9 +278,10 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
       case 'dika':
         return (
           <g>
-            {/* Slick oily side-parted hair (klimis belah samping) with glossy shine pixel */}
+            {/* Slick oily side-parted hair (klimis belah samping) with glossy shine */}
             <rect x={hx - 1} y={headY - 3} width={p.headW + 2} height={5} fill="#1A1A20" />
             <rect x={hx + 2} y={headY - 4} width={p.headW - 1} height={3} fill="#1A1A20" />
+            <rect x={hx + 2} y={headY - 2} width={1} height={2} fill={skin} /> {/* crisp side part */}
             <rect x={hx + 4} y={headY - 3} width={5} height={1} fill="#5B6170" /> {/* oily sheen */}
             <rect x={hx - 1} y={headY + 1} width={2} height={4} fill="#1A1A20" />
           </g>
@@ -277,9 +289,10 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
       case 'pak_wiryo':
         return (
           <g>
-            {/* Cropped hair with grey temples + tall black peci */}
+            {/* Cropped hair with grey temples + tall black peci with woven rim */}
             <rect x={hx - 1} y={headY - 5} width={p.headW + 2} height={7} fill="#1E1E24" />
             <rect x={hx} y={headY - 6} width={p.headW} height={2} fill="#2F3038" />
+            <rect x={hx} y={headY - 1} width={p.headW} height={1} fill="#3D3F4A" />
             <rect x={hx - 1} y={headY + 2} width={2} height={4} fill="#8F949C" /> {/* grey temple */}
             <rect x={hx + p.headW - 1} y={headY + 2} width={2} height={3} fill="#8F949C" />
           </g>
@@ -288,16 +301,19 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
         return (
           <g>
             {/* Bald shiny crown, hair only on sides combed back */}
-            <rect x={hx + 4} y={headY + 1} width={4} height={2} fill="#E9BC99" /> {/* bald shine */}
+            <rect x={hx + 4} y={headY + 1} width={5} height={2} fill="#E9BC99" /> {/* bald shine */}
+            <rect x={hx + 6} y={headY + 1} width={2} height={1} fill="#F5D3B6" />
             <rect x={hx - 2} y={headY + 2} width={3} height={6} fill="#221E1C" />
+            <rect x={hx - 1} y={headY + 3} width={1} height={3} fill="#403936" />
             <rect x={hx + p.headW - 1} y={headY + 2} width={3} height={5} fill="#221E1C" />
           </g>
         );
       case 'bu_endang':
         return (
           <g>
-            {/* Plain brown headscarf (kerudung cokelat polos) framing face and draping shoulders */}
+            {/* Plain brown headscarf (kerudung cokelat polos) with subtle fold shading */}
             <rect x={hx - 3} y={headY - 3} width={p.headW + 6} height={5} fill="#7A563C" />
+            <rect x={hx - 1} y={headY - 2} width={p.headW + 2} height={1} fill="#8E674B" />
             <rect x={hx - 4} y={headY + 1} width={4} height={15} fill="#7A563C" />
             <rect x={hx + p.headW} y={headY + 1} width={3} height={14} fill="#63432D" />
             <rect x={hx - 4} y={headY + 13} width={p.headW + 7} height={4} fill="#63432D" />
@@ -308,8 +324,9 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           <g>
             {/* Hair pulled back into neat traditional bun (sanggul) with gold hairpin (tusuk konde), NO headscarf */}
             <rect x={hx - 1} y={headY - 2} width={p.headW + 2} height={4} fill="#241D1A" />
+            <rect x={hx + 2} y={headY - 1} width={6} height={1} fill="#3F342F" />
             <rect x={hx - 6} y={headY + 2} width={6} height={7} fill="#241D1A" /> {/* sanggul bun */}
-            <rect x={hx - 5} y={headY + 3} width={4} height={5} fill="#362C28" />
+            <rect x={hx - 5} y={headY + 3} width={4} height={5} fill="#3B302B" />
             {/* Tusuk konde hairpin sticking cleanly through bun */}
             <rect x={hx - 8} y={headY + 1} width={9} height={1} fill="#E8B838" />
             <rect x={hx - 9} y={headY} width={2} height={2} fill="#FFF0A8" />
@@ -318,9 +335,10 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
       case 'ayah_bimo':
         return (
           <g>
-            {/* Black peci */}
+            {/* Black peci with woven sheen */}
             <rect x={hx - 1} y={headY - 5} width={p.headW + 2} height={7} fill="#1E1E24" />
             <rect x={hx} y={headY - 6} width={p.headW} height={2} fill="#34353E" />
+            <rect x={hx} y={headY - 1} width={p.headW} height={1} fill="#3F414D" />
             <rect x={hx - 1} y={headY + 2} width={2} height={4} fill="#2B2420" />
           </g>
         );
@@ -329,7 +347,7 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           <g>
             {/* Slick combed dark hair */}
             <rect x={hx - 1} y={headY - 3} width={p.headW + 2} height={5} fill="#18181D" />
-            <rect x={hx + 3} y={headY - 3} width={5} height={1} fill="#4D525E" />
+            <rect x={hx + 3} y={headY - 3} width={5} height={1} fill="#525866" />
           </g>
         );
       case 'pengawas_wanita':
@@ -337,6 +355,7 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           <g>
             {/* Grey hijab (jilbab abu) */}
             <rect x={hx - 3} y={headY - 3} width={p.headW + 6} height={5} fill="#8C9298" />
+            <rect x={hx - 1} y={headY - 2} width={p.headW + 2} height={1} fill="#A4AAB0" />
             <rect x={hx - 4} y={headY + 1} width={4} height={15} fill="#8C9298" />
             <rect x={hx + p.headW} y={headY + 1} width={3} height={14} fill="#6F757C" />
             <rect x={hx - 3} y={headY + 13} width={p.headW + 6} height={4} fill="#7B8188" />
@@ -354,26 +373,30 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
         return (
           <g>
             <rect x={hx - 1} y={headY - 3} width={p.headW + 2} height={5} fill="#261F1B" />
+            <rect x={hx + 2} y={headY - 2} width={4} height={1} fill="#423731" />
             <rect x={hx - 1} y={headY + 1} width={2} height={5} fill="#261F1B" />
           </g>
         );
     }
   };
 
-  // Render facial details (eyes, brows, mustaches, glasses, mole, expression)
+  // Render facial details (eyes, brows, nose hint, mustaches, glasses, mole, expression)
   const renderFace = () => {
     const hx = p.headX + hunchDx;
-    const lx = hx + Math.floor(p.headW * 0.32);
-    const rx = hx + Math.floor(p.headW * 0.68);
+    const lx = hx + Math.floor(p.headW * 0.3);
+    const rx = hx + Math.floor(p.headW * 0.66);
+    const midX = hx + Math.floor(p.headW / 2);
     const isSleep = mood === 'sleep';
     const isNarrowEye = id === 'bimo' || id === 'ayah_bimo';
     const eyeH = blink || isSleep ? 1 : isNarrowEye ? 1 : 2;
     const eyeW = id === 'ibu_rani' ? 3 : 2;
+    const browCol = id === 'pak_wiryo' ? '#58585E' : '#261E1A';
+    const showSunglasses = id === 'ayah_dika';
 
     return (
       <g>
         {/* Eyes */}
-        {id === 'ayah_dika' ? (
+        {showSunglasses ? (
           /* Dark sunglasses */
           <g>
             <rect x={hx + 2} y={eyeY - 1} width={p.headW - 2} height={4} fill="#141418" />
@@ -384,6 +407,13 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           <g>
             <rect x={lx} y={eyeY} width={eyeW} height={eyeH} fill={INK} />
             <rect x={rx} y={eyeY} width={eyeW} height={eyeH} fill={INK} />
+            {/* Subtle pixel eye sparkle on awake, non-narrow eyes */}
+            {!blink && !isSleep && !isNarrowEye ? (
+              <>
+                <rect x={lx} y={eyeY} width={1} height={1} fill="#4A413B" />
+                <rect x={rx} y={eyeY} width={1} height={1} fill="#4A413B" />
+              </>
+            ) : null}
             {/* Glasses for Pengawas Pria */}
             {id === 'pengawas_pria' ? (
               <g>
@@ -395,23 +425,56 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           </g>
         )}
 
-        {/* Brows */}
-        {mood === 'stern' ? (
-          <g>
-            <rect x={lx - 1} y={eyeY - 2} width={4} height={1} fill={INK} />
-            <rect x={rx - 1} y={eyeY - 2} width={4} height={1} fill={INK} />
-          </g>
-        ) : mood === 'sad' || mood === 'shame' ? (
-          <g>
-            <rect x={lx - 1} y={eyeY - 2} width={3} height={1} fill="#4E3B2E" />
-            <rect x={rx} y={eyeY - 2} width={3} height={1} fill="#4E3B2E" />
-          </g>
-        ) : id === 'rani' ? (
-          /* Thick straight brows */
-          <g>
-            <rect x={lx - 1} y={eyeY - 2} width={4} height={1} fill="#231D1A" />
-            <rect x={rx - 1} y={eyeY - 2} width={4} height={1} fill="#231D1A" />
-          </g>
+        {/* Expressive eyebrows for EVERY character (never a blank boxy face!) */}
+        {!showSunglasses ? (
+          mood === 'stern' ? (
+            <g>
+              <rect x={lx - 1} y={eyeY - 2} width={3} height={1} fill={INK} />
+              <rect x={lx + 2} y={eyeY - 1} width={1} height={1} fill={INK} />
+              <rect x={rx} y={eyeY - 2} width={3} height={1} fill={INK} />
+              <rect x={rx - 1} y={eyeY - 1} width={1} height={1} fill={INK} />
+            </g>
+          ) : mood === 'sad' || mood === 'shame' ? (
+            <g>
+              <rect x={lx - 1} y={eyeY - 2} width={2} height={1} fill="#4E3B2E" />
+              <rect x={lx + 1} y={eyeY - 3} width={2} height={1} fill="#4E3B2E" />
+              <rect x={rx - 1} y={eyeY - 3} width={2} height={1} fill="#4E3B2E" />
+              <rect x={rx + 1} y={eyeY - 2} width={2} height={1} fill="#4E3B2E" />
+            </g>
+          ) : mood === 'smug' ? (
+            <g>
+              <rect x={lx - 1} y={eyeY - 2} width={3} height={1} fill={browCol} />
+              <rect x={rx - 1} y={eyeY - 3} width={3} height={1} fill={browCol} />
+            </g>
+          ) : mood === 'shock' ? (
+            <g>
+              <rect x={lx - 1} y={eyeY - 3} width={3} height={1} fill={browCol} />
+              <rect x={rx} y={eyeY - 3} width={3} height={1} fill={browCol} />
+            </g>
+          ) : id === 'rani' ? (
+            /* Thick straight brows */
+            <g>
+              <rect x={lx - 1} y={eyeY - 2} width={4} height={1} fill="#231D1A" />
+              <rect x={rx - 1} y={eyeY - 2} width={4} height={1} fill="#231D1A" />
+            </g>
+          ) : id === 'sari' ? (
+            /* Arched brows (alis melengkung) */
+            <g>
+              <rect x={lx} y={eyeY - 2} width={2} height={1} fill={browCol} />
+              <rect x={rx} y={eyeY - 2} width={2} height={1} fill={browCol} />
+            </g>
+          ) : (
+            /* Clean subtle brows for all other characters */
+            <g>
+              <rect x={lx} y={eyeY - 2} width={3} height={1} fill={browCol} />
+              <rect x={rx - 1} y={eyeY - 2} width={3} height={1} fill={browCol} />
+            </g>
+          )
+        ) : null}
+
+        {/* Subtle 1-pixel nose bridge shadow for facial depth */}
+        {!isSleep && id !== 'pak_darma' ? (
+          <rect x={midX} y={eyeY + 2} width={1} height={2} fill={skinLo} />
         ) : null}
 
         {/* Unique face markers */}
@@ -434,32 +497,37 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           </g>
         ) : null}
         {id === 'pak_darma' ? (
-          /* Thick bushy horizontal black mustache */
-          <rect x={hx + 3} y={mouthY - 2} width={12} height={2} fill="#1A1715" />
+          /* Thick bushy horizontal black mustache + chubby cheek highlight */
+          <g>
+            <rect x={hx + 3} y={mouthY - 2} width={12} height={2} fill="#1A1715" />
+            <rect x={hx + 2} y={eyeY + 3} width={2} height={1} fill="#E6B48F" />
+          </g>
         ) : null}
 
         {/* Mouth by mood */}
         {mood === 'happy' ? (
           <g>
-            <rect x={hx + Math.floor(p.headW / 2) - 2} y={mouthY} width={5} height={1} fill={INK} />
-            <rect x={hx + Math.floor(p.headW / 2) - 3} y={mouthY - 1} width={1} height={1} fill={INK} />
-            <rect x={hx + Math.floor(p.headW / 2) + 3} y={mouthY - 1} width={1} height={1} fill={INK} />
+            <rect x={midX - 2} y={mouthY} width={5} height={1} fill={INK} />
+            <rect x={midX - 3} y={mouthY - 1} width={1} height={1} fill={INK} />
+            <rect x={midX + 3} y={mouthY - 1} width={1} height={1} fill={INK} />
           </g>
         ) : mood === 'shock' ? (
-          <rect x={hx + Math.floor(p.headW / 2) - 1} y={mouthY - 1} width={3} height={3} fill="#6B2B2B" />
+          <rect x={midX - 1} y={mouthY - 1} width={3} height={3} fill="#6B2B2B" />
         ) : mood === 'sad' || mood === 'shame' ? (
           <g>
-            <rect x={hx + Math.floor(p.headW / 2) - 2} y={mouthY} width={5} height={1} fill={INK} />
-            <rect x={hx + Math.floor(p.headW / 2) - 3} y={mouthY + 1} width={1} height={1} fill={INK} />
-            <rect x={hx + Math.floor(p.headW / 2) + 3} y={mouthY + 1} width={1} height={1} fill={INK} />
+            <rect x={midX - 2} y={mouthY} width={5} height={1} fill={INK} />
+            <rect x={midX - 3} y={mouthY + 1} width={1} height={1} fill={INK} />
+            <rect x={midX + 3} y={mouthY + 1} width={1} height={1} fill={INK} />
           </g>
         ) : mood === 'smug' ? (
           <g>
-            <rect x={hx + Math.floor(p.headW / 2) - 1} y={mouthY} width={4} height={1} fill={INK} />
-            <rect x={hx + Math.floor(p.headW / 2) + 3} y={mouthY - 1} width={1} height={1} fill={INK} />
+            <rect x={midX - 1} y={mouthY} width={4} height={1} fill={INK} />
+            <rect x={midX + 3} y={mouthY - 1} width={1} height={1} fill={INK} />
           </g>
+        ) : mood === 'sleep' ? (
+          <rect x={midX - 1} y={mouthY} width={2} height={2} fill="#7A4942" />
         ) : (
-          <rect x={hx + Math.floor(p.headW / 2) - 2} y={mouthY} width={4} height={1} fill={INK} />
+          <rect x={midX - 2} y={mouthY} width={4} height={1} fill={INK} />
         )}
       </g>
     );
@@ -600,13 +668,12 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
     }
 
     if (pose === 'reject_point') {
-      // Pak Wiryo pushing envelope firmly away in front (open vertical palm) while other arm points UP toward the score board!
+      // Pak Wiryo pushing envelope firmly away in front (open vertical palm) while back arm points UP toward the score board cleanly outside his face!
       return (
         <g>
-          {/* Upper back/other arm raised pointing up-front toward the announcement board */}
-          <rect x={tx - 2} y={armY - 8} width={4} height={11} fill={sleeveCol} stroke={INK} strokeWidth={1} />
-          <rect x={tx + 1} y={armY - 10} width={8} height={4} fill={col.top} stroke={INK} strokeWidth={1} />
-          <rect x={tx + 9} y={armY - 10} width={4} height={2} fill={skin} stroke={INK} strokeWidth={1} />
+          {/* Back arm raised cleanly behind/up toward the announcement board (never overlapping face) */}
+          <rect x={tx - 5} y={armY - 12} width={4} height={16} fill={sleeveCol} stroke={INK} strokeWidth={1} />
+          <rect x={tx - 5} y={armY - 16} width={4} height={4} fill={skin} stroke={INK} strokeWidth={1} />
           {/* Front arm extending straight forward with upright open palm pushing envelope away */}
           <rect x={tx + tw - 1} y={armY + 3} width={11} height={4} fill={col.top} stroke={INK} strokeWidth={1} />
           <rect x={tx + tw + 10} y={armY + 1} width={3} height={7} fill={skin} stroke={INK} strokeWidth={1} />
@@ -645,6 +712,17 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           <rect x={tx + tw - 2} y={armY + 2} width={6} height={10} fill={col.top} stroke={INK} strokeWidth={1} />
           <rect x={tx + tw + 2 + writeX} y={armY + 10} width={4} height={3} fill={skin} stroke={INK} strokeWidth={1} />
           <rect x={tx + tw + 5 + writeX} y={armY + 8} width={2} height={6} fill="#E8B838" />
+        </g>
+      );
+    }
+
+    if (pose === 'slouch_desk') {
+      // Arms folded lazily forward on the desk while dozing off
+      return (
+        <g>
+          <rect x={tx - 3} y={armY + 4} width={10} height={5} fill={sleeveCol} stroke={INK} strokeWidth={1} />
+          <rect x={tx + tw - 5} y={armY + 4} width={10} height={5} fill={col.top} stroke={INK} strokeWidth={1} />
+          <rect x={tx + 6} y={armY + 5} width={5} height={4} fill={skin} stroke={INK} strokeWidth={1} />
         </g>
       );
     }
@@ -699,6 +777,16 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
         ) : null}
         {holding === 'stick' ? (
           <rect x={tx + tw + 2} y={armY - 4} width={2} height={30} fill="#7B5230" stroke={INK} strokeWidth={1} />
+        ) : null}
+        {holding === 'suitcase' ? (
+          <g>
+            {/* Leather suitcase carried by hand (e.g. Dika returning from city) */}
+            <rect x={tx + tw} y={armY + 14} width={5} height={2} fill="#4A3220" stroke={INK} strokeWidth={0.8} />
+            <rect x={tx + tw - 2} y={armY + 16} width={11} height={9} fill="#7B4E2B" stroke={INK} strokeWidth={1} />
+            <rect x={tx + tw} y={armY + 18} width={7} height={5} fill="#9C6B3C" />
+            <rect x={tx + tw + 1} y={armY + 16} width={1} height={9} fill="#E8B838" />
+            <rect x={tx + tw + 6} y={armY + 16} width={1} height={9} fill="#E8B838" />
+          </g>
         ) : null}
       </g>
     );
@@ -824,6 +912,14 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
         {/* Neck */}
         <rect x={p.headX + hunchDx + Math.floor(p.headW / 2) - 2} y={headY + p.headH - 1} width={4} height={3} fill={skinLo} />
 
+        {/* Subtle ears on uncovered sides so heads don't look like plain boxes */}
+        {id !== 'bu_endang' && id !== 'pengawas_wanita' && id !== 'sari' ? (
+          <g>
+            <rect x={p.headX + hunchDx - 2} y={eyeY + 1} width={2} height={3} fill={skinLo} stroke={INK} strokeWidth={0.8} />
+            <rect x={p.headX + hunchDx + p.headW} y={eyeY + 1} width={2} height={3} fill={skinLo} stroke={INK} strokeWidth={0.8} />
+          </g>
+        ) : null}
+
         {/* Head */}
         <rect
           x={p.headX + hunchDx}
@@ -834,8 +930,9 @@ export const PixelCharacter: React.FC<PixelCharacterProps> = ({
           stroke={INK}
           strokeWidth={1}
         />
-        {/* One-step face shadow */}
+        {/* One-step face shadow & subtle chin shadow */}
         <rect x={p.headX + hunchDx + p.headW - 3} y={headY + 1} width={2} height={p.headH - 2} fill={skinLo} />
+        <rect x={p.headX + hunchDx + 2} y={headY + p.headH - 2} width={p.headW - 4} height={1} fill={skinLo} />
 
         {renderHair()}
         {renderFace()}

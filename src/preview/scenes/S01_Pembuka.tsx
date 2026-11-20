@@ -14,8 +14,9 @@ const INK = PAL.ink;
  */
 const ClassroomBackdrop: React.FC<{
   boardText?: string;
+  boardSub?: string;
   windowShift?: number;
-}> = ({boardText = 'UJIAN BEASISWA', windowShift = 0}) => (
+}> = ({boardText = 'UJIAN BEASISWA', boardSub = '10 KURSI KE KOTA', windowShift = 0}) => (
   <AbsoluteFill>
     <svg width={1280} height={720} viewBox="0 0 1280 720" shapeRendering="crispEdges">
       {/* Upper plaster wall (identical warm Year 2 cream) */}
@@ -33,8 +34,8 @@ const ClassroomBackdrop: React.FC<{
         <rect key={fy} x={0} y={fy} width={1280} height={3} fill="#76502D" />
       ))}
 
-      {/* Windows showing the same shared blue sky #8FC6E8 */}
-      {[100 + windowShift, 980 - windowShift].map((wx) => (
+      {/* Windows showing the same shared blue sky #8FC6E8 (clean margin from clock & poster at all windowShifts) */}
+      {[64 + windowShift, 1020 - windowShift].map((wx) => (
         <g key={wx} transform={`translate(${wx}, 72)`}>
           <rect x={0} y={0} width={196} height={184} fill={PAL.wood} stroke={INK} strokeWidth={4} />
           <rect x={12} y={12} width={172} height={160} fill={PAL.skyMid} stroke={INK} strokeWidth={2} />
@@ -45,6 +46,24 @@ const ClassroomBackdrop: React.FC<{
           <rect x={12} y={90} width={172} height={6} fill={PAL.wood} />
         </g>
       ))}
+
+      {/* Small pixel wall clock (left of chalkboard) */}
+      <g transform="translate(308, 92)">
+        <rect x={0} y={0} width={38} height={38} fill={PAL.woodLo} stroke={INK} strokeWidth={3} />
+        <rect x={5} y={5} width={28} height={28} fill="#F7F2E2" />
+        <rect x={18} y={9} width={3} height={11} fill={INK} />
+        <rect x={18} y={18} width={9} height={3} fill="#B83B32" />
+      </g>
+
+      {/* Small framed schedule poster (right of chalkboard) */}
+      <g transform="translate(932, 92)">
+        <rect x={0} y={0} width={36} height={48} fill={PAL.wood} stroke={INK} strokeWidth={3} />
+        <rect x={5} y={5} width={26} height={38} fill="#F4EDD8" />
+        <rect x={8} y={9} width={20} height={6} fill="#C8513E" />
+        <rect x={8} y={20} width={18} height={3} fill="#7B7364" />
+        <rect x={8} y={27} width={14} height={3} fill="#7B7364" />
+        <rect x={8} y={34} width={18} height={3} fill="#7B7364" />
+      </g>
 
       {/* Green chalkboard */}
       <rect x={360} y={64} width={560} height={224} fill={PAL.chalkboardFrame} stroke={INK} strokeWidth={5} />
@@ -63,14 +82,14 @@ const ClassroomBackdrop: React.FC<{
         width: 520,
         textAlign: 'center',
         fontFamily: PIXEL_FONT,
-        fontSize: 22,
+        fontSize: 21,
         color: '#EDF2E6',
         letterSpacing: '0.06em',
         lineHeight: 1.8,
       }}
     >
       <div>{boardText}</div>
-      <div style={{fontSize: 12, color: '#C8D8CC', marginTop: 12}}>BEASISWA KE KOTA</div>
+      <div style={{fontSize: 12, color: '#C8D8CC', marginTop: 12}}>{boardSub}</div>
     </div>
   </AbsoluteFill>
 );
@@ -93,9 +112,15 @@ const ExamDesk: React.FC<{
       {/* Desk top */}
       <rect x={0} y={14} width={width} height={24} fill={PAL.woodHi} stroke={INK} strokeWidth={3} />
       {/* Exam sheet on desk */}
-      <rect x={38} y={4} width={92} height={22} fill={PAL.paper} stroke={INK} strokeWidth={2} />
-      <rect x={46} y={11} width={52} height={3} fill={PAL.paperLine} />
-      <rect x={46} y={17} width={66} height={3} fill={PAL.paperLine} />
+      <rect x={34} y={2} width={104} height={24} fill={PAL.paper} stroke={INK} strokeWidth={2} />
+      {!paperName ? (
+        <>
+          <rect x={44} y={10} width={52} height={3} fill={PAL.paperLine} />
+          <rect x={44} y={16} width={68} height={3} fill={PAL.paperLine} />
+        </>
+      ) : (
+        <rect x={44} y={20} width={84} height={2} fill={PAL.paperLine} />
+      )}
       {/* Identical sealed exam envelope (amplop soal bersegel merah) */}
       {showSeal ? (
         <g>
@@ -109,9 +134,9 @@ const ExamDesk: React.FC<{
       <div
         style={{
           position: 'absolute',
-          left: 42,
-          top: 5,
-          width: 84,
+          left: 36,
+          top: 6,
+          width: 100,
           textAlign: 'center',
           fontFamily: PIXEL_FONT,
           fontSize: 10,
@@ -205,39 +230,39 @@ export const P2_ujian_serentak: React.FC = () => {
     );
   }
 
-  if (f < 355) {
-    // Sub-shot B: Desa Prestasi classroom (Rani & peers writing, proportionate seated ~220px)
+  if (f < 386) {
+    // Sub-shot B: Desa Prestasi classroom (Rani & Bimo seated cleanly ABOVE desks, ~228px, synced to "di desa kiri, ujian ini menentukan segalanya")
     const lf = f - 215;
     return (
-      <SmoothCamera dur={140} startFrame={215} endFrame={355} zoomFrom={1.0} zoomTo={1.07} origin="44% 62%">
-        <ClassroomBackdrop boardText="UJIAN BEASISWA" windowShift={0} />
+      <SmoothCamera dur={171} startFrame={215} endFrame={386} zoomFrom={1.0} zoomTo={1.07} origin="44% 62%">
+        <ClassroomBackdrop boardText="UJIAN BEASISWA" boardSub="DESA PRESTASI — 10 KURSI" windowShift={0} />
         {/* Male district proctor observing */}
         <PixelCharacter id="pengawas_pria" x={950} y={222} height={382} facing="left" mood="focus" holding="clipboard" />
-        {/* Back row students seated */}
-        <PixelCharacter id="bimo" x={580} y={350} height={215} facing="right" pose="write" mood="neutral" />
-        <ExamDesk x={548} y={452} width={215} showSeal />
-        {/* Front row: Rani prominently seated (~228px) writing diligently */}
-        <PixelCharacter id="rani" x={235} y={362} height={228} facing="right" pose="write" mood="focus" />
-        <ExamDesk x={198} y={472} width={235} showSeal />
+        {/* Back row: Bimo seated cleanly above desk */}
+        <PixelCharacter id="bimo" x={552} y={302} height={224} facing="right" pose="write" mood="neutral" />
+        <ExamDesk x={544} y={456} width={230} showSeal />
+        {/* Front row: Rani prominently seated (~230px) writing diligently, torso clearly visible above desk */}
+        <PixelCharacter id="rani" x={224} y={316} height={230} facing="right" pose="write" mood="focus" />
+        <ExamDesk x={198} y={474} width={235} showSeal />
         {/* Smooth local fade-in on cut */}
         <AbsoluteFill style={{backgroundColor: '#1A1612', opacity: 1 - fadeIn(lf, 0, 6), pointerEvents: 'none'}} />
       </SmoothCamera>
     );
   }
 
-  // Sub-shot C: Desa Orang Dalam classroom (Sari & Dika writing, identical sealed exam envelope)
-  const lf = f - 355;
+  // Sub-shot C (386..495): Desa Orang Dalam classroom (Sari & Dika, synced to "Di desa kanan, ujian ini hanya sandiwara")
+  const lf = f - 386;
   return (
-    <SmoothCamera dur={140} startFrame={355} endFrame={495} zoomFrom={1.0} zoomTo={1.07} origin="44% 62%">
-      <ClassroomBackdrop boardText="UJIAN BEASISWA" windowShift={24} />
+    <SmoothCamera dur={109} startFrame={386} endFrame={495} zoomFrom={1.0} zoomTo={1.07} origin="44% 62%">
+      <ClassroomBackdrop boardText="UJIAN BEASISWA" boardSub="DESA ORANG DALAM — 10 KURSI" windowShift={24} />
       {/* Female district proctor (grey hijab, same khaki uniform) */}
       <PixelCharacter id="pengawas_wanita" x={950} y={226} height={378} facing="left" mood="focus" holding="clipboard" />
-      {/* Back row: Dika seated */}
-      <PixelCharacter id="dika" x={585} y={340} height={225} facing="right" pose="sit" mood="smug" />
-      <ExamDesk x={548} y={452} width={215} showSeal />
-      {/* Front row: Sari prominently seated (~228px) writing diligently */}
-      <PixelCharacter id="sari" x={230} y={362} height={228} facing="right" pose="write" mood="focus" />
-      <ExamDesk x={198} y={472} width={235} showSeal />
+      {/* Back row: Dika seated cleanly above desk */}
+      <PixelCharacter id="dika" x={576} y={300} height={226} facing="right" pose="sit" mood="smug" />
+      <ExamDesk x={548} y={456} width={220} showSeal />
+      {/* Front row: Sari prominently seated (~230px) writing diligently, torso clearly visible above desk */}
+      <PixelCharacter id="sari" x={222} y={314} height={230} facing="right" pose="write" mood="focus" />
+      <ExamDesk x={198} y={474} width={235} showSeal />
       <AbsoluteFill style={{backgroundColor: '#1A1612', opacity: 1 - fadeIn(lf, 0, 6), pointerEvents: 'none'}} />
     </SmoothCamera>
   );
@@ -257,10 +282,10 @@ export const P3_tebakan: React.FC = () => {
   const zoom = interpolate(lf, [0, segLen], [1.0, 1.09], {...CLAMP, easing: Easing.inOut(Easing.quad)});
 
   const specs = [
-    {id: 'rani' as const, label: 'RANI', pose: 'write' as const, mood: 'focus' as const, h: 240, board: 'DESA PRESTASI'},
-    {id: 'bimo' as const, label: 'BIMO', pose: 'sit' as const, mood: 'sad' as const, h: 238, board: 'DESA PRESTASI'},
-    {id: 'sari' as const, label: 'SARI', pose: 'write' as const, mood: 'focus' as const, h: 240, board: 'DESA ORANG DALAM'},
-    {id: 'dika' as const, label: 'DIKA', pose: 'sit' as const, mood: 'smug' as const, h: 245, board: 'DESA ORANG DALAM'},
+    {id: 'rani' as const, label: 'RANI', pose: 'write' as const, mood: 'focus' as const, h: 242, y: 312, board: 'DESA PRESTASI'},
+    {id: 'bimo' as const, label: 'BIMO', pose: 'sit' as const, mood: 'sad' as const, h: 240, y: 300, board: 'DESA PRESTASI'},
+    {id: 'sari' as const, label: 'SARI', pose: 'write' as const, mood: 'focus' as const, h: 242, y: 302, board: 'DESA ORANG DALAM'},
+    {id: 'dika' as const, label: 'DIKA', pose: 'sit' as const, mood: 'smug' as const, h: 245, y: 310, board: 'DESA ORANG DALAM'},
   ];
   const cur = specs[idx];
 
@@ -272,19 +297,19 @@ export const P3_tebakan: React.FC = () => {
           transform: `scale(${zoom.toFixed(5)})`,
         }}
       >
-        <ClassroomBackdrop boardText={cur.board} windowShift={idx >= 2 ? 20 : 0} />
+        <ClassroomBackdrop boardText={cur.board} boardSub="UJIAN BEASISWA" windowShift={idx >= 2 ? 20 : 0} />
         {/* Centered proportionate seated close-up portrait (~240px seated teen) */}
         <PixelCharacter
           id={cur.id}
           x={505}
-          y={315}
+          y={cur.y}
           height={cur.h}
           facing="right"
           pose={cur.pose}
           mood={cur.mood}
         />
         {/* Large wooden school desk foreground with physical name written on exam paper */}
-        <ExamDesk x={465} y={456} width={350} paperName={cur.label} showSeal />
+        <ExamDesk x={465} y={458} width={350} paperName={cur.label} showSeal />
       </AbsoluteFill>
     </AbsoluteFill>
   );

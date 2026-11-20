@@ -156,16 +156,16 @@ const MapTree: React.FC<{x: number; y: number; scale?: number; frame: number; ph
 };
 
 const DEFAULT_VILLAGERS: MapWalkerDef[] = [
-  // Left village (Desa Prestasi) - 4 symmetric villagers
-  {id: 'p1', path: [[175, 290], [340, 290], [340, 415]], shirt: '#5E9AC7', speed: 34, phase: 0.1},
-  {id: 'p2', path: [[430, 230], [430, 395], [545, 395]], shirt: '#D98E4E', speed: 36, phase: 0.45},
-  {id: 'p3', path: [[150, 435], [320, 435], [320, 520]], shirt: '#5EA369', speed: 32, phase: 0.7},
-  {id: 'p4', path: [[470, 470], [575, 470]], shirt: '#C9685B', speed: 30, phase: 0.25},
-  // Right village (Desa Orang Dalam) - 4 symmetric villagers
-  {id: 'o1', path: [[745, 230], [745, 395], [890, 395]], shirt: '#D4A653', speed: 35, phase: 0.2},
-  {id: 'o2', path: [[920, 290], [1110, 290], [1110, 415]], shirt: '#6C8CB8', speed: 34, phase: 0.55},
-  {id: 'o3', path: [[715, 470], [840, 470]], shirt: '#B5695E', speed: 31, phase: 0.8},
-  {id: 'o4', path: [[945, 435], [1120, 435], [1120, 515]], shirt: '#7A995E', speed: 33, phase: 0.35},
+  // Left village (Desa Prestasi) - 4 symmetric villagers walking cleanly on dirt lanes
+  {id: 'p1', path: [[155, 294], [385, 294], [585, 294]], shirt: '#5E9AC7', speed: 34, phase: 0.1},
+  {id: 'p2', path: [[360, 294], [585, 294], [585, 438]], shirt: '#D98E4E', speed: 36, phase: 0.45},
+  {id: 'p3', path: [[150, 438], [360, 438], [580, 438]], shirt: '#5EA369', speed: 32, phase: 0.7},
+  {id: 'p4', path: [[250, 438], [440, 438]], shirt: '#C9685B', speed: 30, phase: 0.25},
+  // Right village (Desa Orang Dalam) - 4 symmetric villagers walking cleanly on dirt lanes
+  {id: 'o1', path: [[695, 294], [910, 294], [1110, 294]], shirt: '#D4A653', speed: 35, phase: 0.2},
+  {id: 'o2', path: [[695, 294], [695, 438], [910, 438]], shirt: '#6C8CB8', speed: 34, phase: 0.55},
+  {id: 'o3', path: [[720, 438], [910, 438]], shirt: '#B5695E', speed: 31, phase: 0.8},
+  {id: 'o4', path: [[870, 438], [1120, 438]], shirt: '#7A995E', speed: 33, phase: 0.35},
 ];
 
 export interface VillageMapProps {
@@ -328,19 +328,26 @@ export const VillageMap: React.FC<VillageMapProps> = ({
         <rect x={596} y={554} width={8} height={68} fill={PAL.woodHi} stroke={INK} strokeWidth={1.5} />
         <rect x={676} y={554} width={8} height={68} fill={PAL.woodHi} stroke={INK} strokeWidth={1.5} />
 
-        {/* Rice paddies (SAWAH) on both sides south of the river */}
+        {/* Rice paddies (SAWAH) on both sides south of the river with varied green tones & pixel rice shoots */}
         {[
-          [32, 632, 165, 72],
-          [214, 632, 175, 72],
-          [406, 632, 172, 72],
-          [702, 632, 172, 72],
-          [892, 632, 175, 72],
-          [1084, 632, 165, 72],
-        ].map(([px, py, pw, ph], idx) => (
+          [32, 632, 165, 72, '#86AE49'],
+          [214, 632, 175, 72, '#92B852'],
+          [406, 632, 172, 72, '#82A945'],
+          [702, 632, 172, 72, isY4 ? '#8A9E56' : '#86AE49'],
+          [892, 632, 175, 72, isY4 ? '#93A65E' : '#92B852'],
+          [1084, 632, 165, 72, isY4 ? '#859852' : '#82A945'],
+        ].map(([px, py, pw, ph, pCol], idx) => (
           <g key={idx}>
-            <rect x={px} y={py} width={pw} height={ph} fill={PAL.paddyWarm} stroke={PAL.roadWarmLo} strokeWidth={3} />
+            <rect x={px as number} y={py as number} width={pw as number} height={ph as number} fill={pCol as string} stroke={PAL.roadWarmLo} strokeWidth={3} />
             {[14, 32, 50].map((ry) => (
-              <rect key={ry} x={px + 8} y={py + ry} width={pw - 16} height={6} fill={PAL.paddyWater} />
+              <g key={ry}>
+                <rect x={(px as number) + 8} y={(py as number) + ry} width={(pw as number) - 16} height={6} fill={PAL.paddyWater} />
+                {[18, 52, 86, 120, 146].map((rx) =>
+                  rx < (pw as number) - 14 ? (
+                    <rect key={rx} x={(px as number) + rx} y={(py as number) + ry - 4} width={4} height={6} fill="#5E9139" />
+                  ) : null,
+                )}
+              </g>
             ))}
           </g>
         ))}
@@ -584,6 +591,17 @@ export const VillageMap: React.FC<VillageMapProps> = ({
           yearLabel={scoreMode === 'y2' ? 'TAHUN 2' : scoreMode === 'y4' ? 'TAHUN 4' : ''}
           scoreLeft={scoreMode === 'y2' ? '44' : scoreMode === 'y4' ? '51' : ''}
           scoreRight={scoreMode === 'y2' ? '43' : scoreMode === 'y4' ? '48' : ''}
+          mg={
+            scoreMode === 'y4'
+              ? {
+                  barLeftRatio: 51 / 54,
+                  barRightRatio: 48 / 54,
+                  diffLabel: 'SELISIH 3',
+                  diffPop: 1,
+                  diffOpacity: 1,
+                }
+              : undefined
+          }
         />
       ) : null}
 

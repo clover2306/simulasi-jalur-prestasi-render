@@ -35,19 +35,16 @@ export const PixelSky: React.FC<{
         />
       ))}
       {mode === 'night' ? (
-        <svg width={1280} height={height} viewBox="0 0 1280 220" shapeRendering="crispEdges" style={{position: 'absolute', inset: 0}}>
+        <svg width={1280} height={height} viewBox={`0 0 1280 ${height}`} shapeRendering="crispEdges" style={{position: 'absolute', inset: 0}}>
           {[
             [90, 28], [210, 52], [350, 22], [480, 44], [640, 18], [790, 48], [940, 26], [1110, 40], [1220, 20],
           ].map(([sx, sy], i) => {
             const twinkle = (f + i * 17) % 45 > 38 ? 0.45 : 1;
             return <rect key={i} x={sx} y={sy} width={4} height={4} fill="#F5EED0" opacity={twinkle} />;
           })}
-          {/* Pixel crescent moon */}
-          <rect x={1070} y={24} width={28} height={28} fill="#F5E6A6" />
-          <rect x={1078} y={24} width={20} height={22} fill={PAL.nightTop} />
         </svg>
       ) : clouds ? (
-        <svg width={1280} height={height} viewBox="0 0 1280 220" shapeRendering="crispEdges" style={{position: 'absolute', inset: 0}}>
+        <svg width={1280} height={height} viewBox={`0 0 1280 ${height}`} shapeRendering="crispEdges" style={{position: 'absolute', inset: 0}}>
           {[140, 560, 990].map((cx, i) => {
             const px = ((cx + drift * (0.6 + i * 0.2)) % 1420) - 100;
             const py = 22 + (i % 2) * 24;
@@ -65,10 +62,28 @@ export const PixelSky: React.FC<{
   );
 };
 
+export interface ScoreboardMgProps {
+  /** Continuous 0..1 bar fill ratio under left (Prestasi) column */
+  barLeftRatio: number;
+  /** Continuous 0..1 bar fill ratio under right (Orang Dalam) column */
+  barRightRatio: number;
+  /** Subtle continuous scale emphasis when left/right count finishes (default 1) */
+  leftPulse?: number;
+  rightPulse?: number;
+  /** Small wooden hanging tag below board, e.g. 'SELISIH 1' or 'SELISIH 3' */
+  diffLabel?: string;
+  /** Continuous pop-in scale progress (0..1+, from popInPlace) */
+  diffPop?: number;
+  /** Continuous opacity 0..1 for the hanging diff tag */
+  diffOpacity?: number;
+}
+
 /**
  * 17-Agustus wooden scoreboard standing in the world along the middle road (brief-visual §4 & §7 rule 7).
  * NEVER a HUD overlay — always grounded on wooden posts in the soil.
  * `yearLabel` and scores can be empty (A2) or exact checkpoint numbers (44-43 in Year 2, 51-48 in Year 4).
+ * Optional `mg` adds recessed comparison bar tracks inside the wooden board and a hanging wooden
+ * "SELISIH X" slat physically attached below the board (used ONLY in T2_4_papan_skor and T4_4_papan_skor).
  */
 export const WoodenScoreboard: React.FC<{
   x: number;
@@ -78,11 +93,20 @@ export const WoodenScoreboard: React.FC<{
   scoreLeft?: string; // '' when empty, '44', '51'
   scoreRight?: string; // '' when empty, '43', '48'
   flipProgress?: number; // 0..1 optional tile flip emphasis
+  mg?: ScoreboardMgProps;
   style?: React.CSSProperties;
-}> = ({x, y, scale = 1, yearLabel = '', scoreLeft = '', scoreRight = '', flipProgress = 1, style}) => {
+}> = ({x, y, scale = 1, yearLabel = '', scoreLeft = '', scoreRight = '', flipProgress = 1, mg, style}) => {
   const w = 360;
-  const h = 250;
+  const hasMg = Boolean(mg);
+  const h = hasMg ? 276 : 250;
   const flipScaleY = 0.15 + 0.85 * Math.abs(Math.cos((1 - flipProgress) * Math.PI * 0.5));
+
+  const leftBarW = mg ? Math.max(0, Math.min(1, mg.barLeftRatio)) * 108 : 0;
+  const rightBarW = mg ? Math.max(0, Math.min(1, mg.barRightRatio)) * 108 : 0;
+  const leftPulse = mg?.leftPulse ?? 1;
+  const rightPulse = mg?.rightPulse ?? 1;
+  const diffPop = mg?.diffPop ?? 0;
+  const diffOpacity = mg?.diffOpacity ?? 0;
 
   return (
     <div
@@ -100,12 +124,12 @@ export const WoodenScoreboard: React.FC<{
     >
       <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} shapeRendering="crispEdges">
         {/* Ground shadow */}
-        <rect x={36} y={236} width={288} height={12} fill="rgba(30,26,22,0.28)" />
+        <rect x={36} y={hasMg ? 262 : 236} width={288} height={12} fill="rgba(30,26,22,0.28)" />
         {/* Two thick wooden legs planted in dirt */}
-        <rect x={54} y={168} width={22} height={74} fill={PAL.wood} stroke={INK} strokeWidth={4} />
-        <rect x={68} y={170} width={6} height={70} fill={PAL.woodLo} />
-        <rect x={284} y={168} width={22} height={74} fill={PAL.wood} stroke={INK} strokeWidth={4} />
-        <rect x={298} y={170} width={6} height={70} fill={PAL.woodLo} />
+        <rect x={54} y={hasMg ? 194 : 168} width={22} height={74} fill={PAL.wood} stroke={INK} strokeWidth={4} />
+        <rect x={68} y={hasMg ? 196 : 170} width={6} height={70} fill={PAL.woodLo} />
+        <rect x={284} y={hasMg ? 194 : 168} width={22} height={74} fill={PAL.wood} stroke={INK} strokeWidth={4} />
+        <rect x={298} y={hasMg ? 196 : 170} width={6} height={70} fill={PAL.woodLo} />
 
         {/* Small corrugated wooden rain-cap roof on top */}
         <rect x={16} y={32} width={328} height={14} fill={PAL.roofWarm} stroke={INK} strokeWidth={4} />
@@ -116,12 +140,12 @@ export const WoodenScoreboard: React.FC<{
         <rect x={116} y={10} width={128} height={24} fill="#F3E9D0" stroke={INK} strokeWidth={2} />
 
         {/* Main wooden plank board body */}
-        <rect x={24} y={46} width={312} height={134} fill={PAL.wood} stroke={INK} strokeWidth={4} />
-        <rect x={32} y={54} width={296} height={118} fill={PAL.woodHi} stroke={INK} strokeWidth={2} />
+        <rect x={24} y={46} width={312} height={hasMg ? 160 : 134} fill={PAL.wood} stroke={INK} strokeWidth={4} />
+        <rect x={32} y={54} width={296} height={hasMg ? 144 : 118} fill={PAL.woodHi} stroke={INK} strokeWidth={2} />
         {/* Horizontal plank seam lines */}
         <rect x={34} y={92} width={292} height={3} fill={PAL.woodLo} />
         {/* Center vertical divider bar of the wooden board */}
-        <rect x={177} y={54} width={6} height={118} fill={PAL.woodLo} />
+        <rect x={177} y={54} width={6} height={hasMg ? 144 : 118} fill={PAL.woodLo} />
 
         {/* Left flip-card slot */}
         <rect x={48} y={102} width={114} height={60} fill="#362618" stroke={INK} strokeWidth={3} />
@@ -131,6 +155,39 @@ export const WoodenScoreboard: React.FC<{
         {[72, 134, 222, 284].map((rx) => (
           <rect key={rx} x={rx} y={96} width={8} height={10} fill="#A0A8B0" stroke={INK} strokeWidth={2} />
         ))}
+
+        {/* Recessed painted-wood comparison bar tracks inside the wooden board (MG beats only) */}
+        {hasMg ? (
+          <g>
+            {/* Left column (Prestasi) recessed bar groove */}
+            <rect x={48} y={170} width={114} height={20} fill="#362618" stroke={INK} strokeWidth={3} />
+            {[78, 105, 132].map((nx) => (
+              <rect key={`ln-${nx}`} x={nx} y={173} width={2} height={14} fill="#4D3723" />
+            ))}
+            {leftBarW > 0.5 ? (
+              <g>
+                <rect x={51} y={173} width={leftBarW} height={14} fill={PAL.gold} />
+                <rect x={51} y={173} width={leftBarW} height={3} fill="#F7DF84" />
+                <rect x={51} y={184} width={leftBarW} height={3} fill={PAL.goldLo} />
+                {leftBarW > 3 ? <rect x={51 + leftBarW - 2} y={173} width={2} height={14} fill={INK} /> : null}
+              </g>
+            ) : null}
+
+            {/* Right column (Orang Dalam) recessed bar groove */}
+            <rect x={198} y={170} width={114} height={20} fill="#362618" stroke={INK} strokeWidth={3} />
+            {[228, 255, 282].map((nx) => (
+              <rect key={`rn-${nx}`} x={nx} y={173} width={2} height={14} fill="#4D3723" />
+            ))}
+            {rightBarW > 0.5 ? (
+              <g>
+                <rect x={201} y={173} width={rightBarW} height={14} fill="#C45A40" />
+                <rect x={201} y={173} width={rightBarW} height={3} fill="#DD7E64" />
+                <rect x={201} y={184} width={rightBarW} height={3} fill={PAL.roofWarmLo} />
+                {rightBarW > 3 ? <rect x={201 + rightBarW - 2} y={173} width={2} height={14} fill={INK} /> : null}
+              </g>
+            ) : null}
+          </g>
+        ) : null}
       </svg>
 
       {/* Painted year tile text (physical wood slat) */}
@@ -203,7 +260,7 @@ export const WoodenScoreboard: React.FC<{
           fontFamily: PIXEL_FONT,
           fontSize: 28,
           color: INK,
-          transform: `scaleY(${flipScaleY.toFixed(4)})`,
+          transform: `scale(${leftPulse.toFixed(4)}, ${(flipScaleY * leftPulse).toFixed(4)})`,
         }}
       >
         {scoreLeft}
@@ -226,11 +283,55 @@ export const WoodenScoreboard: React.FC<{
           fontFamily: PIXEL_FONT,
           fontSize: 28,
           color: INK,
-          transform: `scaleY(${flipScaleY.toFixed(4)})`,
+          transform: `scale(${rightPulse.toFixed(4)}, ${(flipScaleY * rightPulse).toFixed(4)})`,
         }}
       >
         {scoreRight}
       </div>
+
+      {/* Small wooden hanging diff tag attached below the scoreboard ("SELISIH 1" / "SELISIH 3") */}
+      {mg?.diffLabel && diffOpacity > 0.005 ? (
+        <div
+          style={{
+            position: 'absolute',
+            left: 180,
+            top: 204,
+            width: 176,
+            height: 40,
+            opacity: diffOpacity,
+            transformOrigin: '50% 0%',
+            transform: `translate(-50%, 0) scale(${diffPop.toFixed(4)})`,
+          }}
+        >
+          <svg width={176} height={40} viewBox="0 0 176 40" shapeRendering="crispEdges">
+            {/* Two metal rings attaching the wooden slat to the bottom of the board */}
+            <rect x={30} y={0} width={8} height={9} fill="#A0A8B0" stroke={INK} strokeWidth={2} />
+            <rect x={138} y={0} width={8} height={9} fill="#A0A8B0" stroke={INK} strokeWidth={2} />
+            {/* Wooden plaque frame matching the scoreboard's palette */}
+            <rect x={8} y={6} width={160} height={30} fill={PAL.woodHi} stroke={INK} strokeWidth={3} />
+            <rect x={14} y={11} width={148} height={20} fill="#F5EED8" stroke={INK} strokeWidth={2} />
+            <rect x={16} y={27} width={144} height={2} fill="#D8CCB0" />
+          </svg>
+          <div
+            style={{
+              position: 'absolute',
+              left: 14,
+              top: 11,
+              width: 148,
+              height: 20,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: PIXEL_FONT,
+              fontSize: 10,
+              letterSpacing: '0.04em',
+              color: INK,
+            }}
+          >
+            {mg.diffLabel}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 };
